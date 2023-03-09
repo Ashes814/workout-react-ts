@@ -8,21 +8,28 @@ import { WorkoutType } from "../../App";
 
 export interface WorkoutTypeProps {
   data: WorkoutType[];
+  submitWorkout: (workoutData: WorkoutType) => void;
+  flyToMarker: (map: any) => void;
 }
 
 export default function Workouts(props: WorkoutTypeProps) {
   return (
     <div className="sidebar">
       <img src={Logo} alt="Logo" className="logo" />
-      <WorkoutBlank />
-
-      {props.data.map((workout) => {
-        return workout.type === "running" ? (
-          <WorkoutRunning key={workout.id} data={workout} />
-        ) : (
-          <WorkoutCycling key={workout.id} data={workout} />
-        );
-      })}
+      <WorkoutBlank submitWorkout={props.submitWorkout} />
+      <div className="workouts__container">
+        {props.data.map((workout) => {
+          return workout.type === "running" ? (
+            <WorkoutRunning
+              key={workout.id}
+              data={workout}
+              flyToMarker={props.flyToMarker}
+            />
+          ) : (
+            <WorkoutCycling key={workout.id} data={workout} />
+          );
+        })}
+      </div>
 
       <p className="copyright">
         &copy; Copyright by -

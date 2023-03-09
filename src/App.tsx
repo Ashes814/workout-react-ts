@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import MapView from "./components/MapView";
 import Workouts from "./components/Workouts";
+import MapContext from "./store/map-context";
 import "./App.css";
 
 export interface WorkoutType {
@@ -40,14 +41,42 @@ const demoData = [
 ];
 
 function App() {
+  const [position, setPosition] = useState([31.5, 121.55]);
+  const [map, setMap] = useState<any>(null);
+  const getLoc = (loc: number[]) => loc;
+
+  const addWorkoutHandler = (workoutData: WorkoutType) => {
+    // const loc = getLoc();
+    // console.log(loc);
+    workoutData.loc = position;
+    setData([...data, workoutData]);
+  };
+
+  const flyToMarker = (loc: any) => {
+    map.flyTo(loc, map.getZoom(13));
+  };
   const [data, setData] = useState(demoData);
   return (
-    <div className="App">
-      <Workouts data={data} />
-      <div id="map-container" className="map-container">
-        <MapView />
+    <MapContext.Provider
+      value={{ flyToMarker: flyToMarker, map: map, setMap: setMap }}
+    >
+      <div className="App">
+        <Workouts
+          data={data}
+          submitWorkout={addWorkoutHandler}
+          flyToMarker={flyToMarker}
+        />
+        <div id="map-container" className="map-container">
+          <MapView
+            data={data}
+            getLoc={getLoc}
+            setPosition={setPosition}
+            position={position}
+            flyToMarker={flyToMarker}
+          />
+        </div>
       </div>
-    </div>
+    </MapContext.Provider>
   );
 }
 

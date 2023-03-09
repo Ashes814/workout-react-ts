@@ -1,13 +1,19 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./index.css";
 import { WorkoutTypeProps } from "../../Workouts";
+import MapContext from "../../../store/map-context";
 
 export default function WorkoutCycling(props: any) {
+  const ctx = useContext(MapContext);
+  const moveToMarker = () => {
+    ctx.flyToMarker(props.data.loc);
+  };
   return (
     <li
       key={props.data.id}
       className="workout workout--cycling"
       data-id="1234567891"
+      onClick={moveToMarker}
     >
       <h2 className="workout__title">Cycling on April 5</h2>
       <div className="workout__details">

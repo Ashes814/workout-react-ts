@@ -4,6 +4,10 @@
   padding: 3rem 5rem 4rem 5rem;
   display: flex;
   flex-direction: column;
+  /* overflow: scroll; */
+}
+.workouts__container {
+  overflow: scroll;
 }
 
 .logo {
