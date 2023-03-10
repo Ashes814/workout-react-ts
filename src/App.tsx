@@ -6,6 +6,7 @@ import "./App.css";
 
 export interface WorkoutType {
   id: string;
+  date: Date;
   type: string;
   loc: number[];
   distance: number;
@@ -16,6 +17,7 @@ export interface WorkoutType {
 const demoData = [
   {
     id: "1",
+    date: new Date(2022, 2, 10, 12, 30, 0),
     type: "running",
     loc: [31.5, 121.5],
     distance: 10,
@@ -24,6 +26,7 @@ const demoData = [
   },
   {
     id: "2",
+    date: new Date(2022, 8, 10, 12, 30, 0),
     type: "cycling",
     loc: [31.4, 121.4],
     distance: 20,
@@ -32,6 +35,7 @@ const demoData = [
   },
   {
     id: "3",
+    date: new Date(2022, 11, 10, 12, 30, 0),
     type: "running",
     loc: [31.6, 121.4],
     distance: 40,
@@ -41,8 +45,11 @@ const demoData = [
 ];
 
 function App() {
+  const [data, setData] = useState(demoData);
   const [position, setPosition] = useState([31.5, 121.55]);
   const [map, setMap] = useState<any>(null);
+  const [showBlank, setShowBlank] = useState<boolean>(false);
+  // const [data]
   const getLoc = (loc: number[]) => loc;
 
   const addWorkoutHandler = (workoutData: WorkoutType) => {
@@ -53,12 +60,16 @@ function App() {
   };
 
   const flyToMarker = (loc: any) => {
-    map.flyTo(loc, map.getZoom(13));
+    map.flyTo(loc, 13);
+    // map.panTo(loc, {
+    //   duration: 1,
+    //   easeLinearity: 0.25,
+    // });
   };
-  const [data, setData] = useState(demoData);
+
   return (
     <MapContext.Provider
-      value={{ flyToMarker: flyToMarker, map: map, setMap: setMap }}
+      value={{ flyToMarker, map, setMap, showBlank, setShowBlank, data }}
     >
       <div className="App">
         <Workouts

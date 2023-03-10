@@ -14,7 +14,10 @@ export default function WorkoutRunning(props: any) {
       data-id="1234567890"
       onClick={moveToMarker}
     >
-      <h2 className="workout__title">Running on April 14</h2>
+      <h2 className="workout__title">
+        Running on{" "}
+        {` ${props.data.date.getMonth() + 1}.${props.data.date.getDate()}`}
+      </h2>
       <div className="workout__details">
         <span className="workout__icon">🏃‍♂️</span>
         <span className="workout__value">{props.data.distance}</span>

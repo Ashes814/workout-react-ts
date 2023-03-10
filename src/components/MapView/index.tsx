@@ -1,15 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import L, { LeafletMouseEvent, LatLngExpression } from "leaflet";
+// import L, { LeafletMouseEvent, LatLngExpression } from "leaflet";
 import markerIconPng from "leaflet/dist/images/marker-icon.png";
 import { Icon } from "leaflet";
-
+import MapContext from "../../store/map-context";
 import "./index.css";
 import MapMarker from "./MapMarker";
 
 export default function MapView(props: any) {
+  // const ctx = useContext(MapContext);
+  // const popDescription = ctx.data;
   // const map = L.map("map-container").setView([51.505, -0.09], 13);
-  console.log(props.data);
   return (
     // <div id="map-container" className="map-container"></div>
     <MapContainer
@@ -35,7 +36,8 @@ export default function MapView(props: any) {
             }
           >
             <Popup>
-              A pretty CSS3 popup. <br /> Easily customizable.
+              {workout.type} at
+              {`${workout.date.getMonth() + 1}/${workout.date.getDate()}`}.
             </Popup>
           </Marker>
         );

@@ -7,16 +7,22 @@ import MapContext from "../../../store/map-context";
 export default function MapMarker(props: any) {
   //   const [markerPosition, setMarkerPosition] = useState<[number, number]>([
   //     31.5, 121.5,
+
   //   ]);
+
+  // const [isAdding, setIsAdding] = useState<boolean>(true);
   const ctx = useContext(MapContext);
-  console.log(ctx);
 
   const map = useMapEvents({
     click: (e) => {
-      //   console.log(markerPosition);
-      console.log(e.latlng);
       //   props.getLoc([e.latlng.lat, e.latlng.lng]);
+
+      // if (isAdding) {
       props.setPosition([e.latlng.lat, e.latlng.lng]);
+      ctx.setShowBlank(true);
+      // setIsAdding(false);
+      // }
+
       // loc = e.latlng;
     },
     locationfound: (location) => {
@@ -39,9 +45,7 @@ export default function MapMarker(props: any) {
         })
       }
     >
-      <Popup>
-        A pretty CSS3 popup. <br /> Easily customizable.
-      </Popup>
+      <Popup>请输入健身信息...</Popup>
     </Marker>
   );
 }
