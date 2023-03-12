@@ -1,32 +1,38 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-// import L, { LeafletMouseEvent, LatLngExpression } from "leaflet";
 import markerIconPng from "leaflet/dist/images/marker-icon.png";
 import { Icon } from "leaflet";
-import MapContext from "../../store/map-context";
 import "./index.css";
 import MapMarker from "./MapMarker";
+import MapContext from "../../store/map-context";
+import { WorkoutType } from "../../App";
+import { LatLngExpression } from "leaflet";
 
-export default function MapView(props: any) {
-  // const ctx = useContext(MapContext);
-  // const popDescription = ctx.data;
-  // const map = L.map("map-container").setView([51.505, -0.09], 13);
+export default function MapView() {
+  const ctx = useContext(MapContext);
   return (
-    // <div id="map-container" className="map-container"></div>
+    // 创建地图容器
     <MapContainer
       className="map-container"
+      // 设置初始化地图中心
       center={[31.5, 121.5]}
+      // 设置缩放级别
       zoom={13}
+      //是否使用滚轮缩放
       scrollWheelZoom={false}
     >
+      {/* 瓦片 */}
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
       />
-      {props.data.map((workout: any) => {
+      {/* 渲染已有数据 */}
+      {ctx.data.map((workout: WorkoutType) => {
         return (
           <Marker
-            position={workout.loc}
+            key={workout.id}
+            position={workout.loc as LatLngExpression}
+            // 定义标记图标
             icon={
               new Icon({
                 iconUrl: markerIconPng,
@@ -35,6 +41,7 @@ export default function MapView(props: any) {
               })
             }
           >
+            {/* 定义弹窗内容 */}
             <Popup>
               {workout.type} at
               {`${workout.date.getMonth() + 1}/${workout.date.getDate()}`}.
@@ -42,12 +49,9 @@ export default function MapView(props: any) {
           </Marker>
         );
       })}
-      <MapMarker
-        getLoc={props.getLoc}
-        setPosition={props.setPosition}
-        position={props.position}
-        flyToMarker={props.flyToMarker}
-      />
+
+      {/* 添加新增数据标记 */}
+      <MapMarker />
     </MapContainer>
   );
 }

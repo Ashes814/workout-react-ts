@@ -1,14 +1,15 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import MapView from "./components/MapView";
 import Workouts from "./components/Workouts";
 import MapContext from "./store/map-context";
 import "./App.css";
+import { LatLngExpression, default as L } from "leaflet";
 
 export interface WorkoutType {
   id: string;
   date: Date;
   type: string;
-  loc: number[];
+  loc: LatLngExpression | number[];
   distance: number;
   duration: number;
   cadOrEle: number;
@@ -24,67 +25,49 @@ const demoData = [
     duration: 5,
     cadOrEle: 10,
   },
-  {
-    id: "2",
-    date: new Date(2022, 8, 10, 12, 30, 0),
-    type: "cycling",
-    loc: [31.4, 121.4],
-    distance: 20,
-    duration: 10,
-    cadOrEle: 20,
-  },
-  {
-    id: "3",
-    date: new Date(2022, 11, 10, 12, 30, 0),
-    type: "running",
-    loc: [31.6, 121.4],
-    distance: 40,
-    duration: 20,
-    cadOrEle: 40,
-  },
 ];
 
 function App() {
-  const [data, setData] = useState(demoData);
-  const [position, setPosition] = useState([31.5, 121.55]);
-  const [map, setMap] = useState<any>(null);
+  // 初始化运动数据
+  const [data, setData] = useState<WorkoutType[]>(demoData);
+  // 初始化标记点坐标
+  const [position, setPosition] = useState<number[]>([31.5, 121.5]);
+  // 初始化leaflet中的map对象-使用useMapEvents创建
+  const [map, setMap] = useState<L.Map>();
+  // 初始化是否显示空白运动数据提交表单
   const [showBlank, setShowBlank] = useState<boolean>(false);
-  // const [data]
-  const getLoc = (loc: number[]) => loc;
-
+  // 添加运动数据
   const addWorkoutHandler = (workoutData: WorkoutType) => {
-    // const loc = getLoc();
-    // console.log(loc);
+    // 将运动数据的坐标位置设置为单击地图中产生标记的位置
     workoutData.loc = position;
+    // 设置运动数据并重新渲染组件
     setData([...data, workoutData]);
   };
 
-  const flyToMarker = (loc: any) => {
-    map.flyTo(loc, 13);
-    // map.panTo(loc, {
-    //   duration: 1,
-    //   easeLinearity: 0.25,
-    // });
+  // 单击左侧运动项目列表中的数据时,能够将地图缩放至右侧对应的标记点中
+  const flyToMarker = (loc: number[]) => {
+    map!.flyTo(loc as LatLngExpression, 13);
   };
 
   return (
     <MapContext.Provider
-      value={{ flyToMarker, map, setMap, showBlank, setShowBlank, data }}
+      // 通过context传递数据
+      value={{
+        flyToMarker,
+        map,
+        setMap,
+        showBlank,
+        setShowBlank,
+        data,
+        position,
+        setPosition,
+        addWorkoutHandler,
+      }}
     >
       <div className="App">
-        <Workouts
-          data={data}
-          submitWorkout={addWorkoutHandler}
-          flyToMarker={flyToMarker}
-        />
+        <Workouts />
         <div id="map-container" className="map-container">
-          <MapView
-            data={data}
-            getLoc={getLoc}
-            setPosition={setPosition}
-            position={position}
-            flyToMarker={flyToMarker}
-          />
+          <MapView />
         </div>
       </div>
     </MapContext.Provider>

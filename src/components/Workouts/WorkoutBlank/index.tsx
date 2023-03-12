@@ -1,16 +1,10 @@
 import React, { useRef, useState, useContext } from "react";
-import { Marker, Popup, useMapEvents } from "react-leaflet";
-import markerIconPng from "leaflet/dist/images/marker-icon.png";
-import { Icon } from "leaflet";
 import "./index.css";
-import { WorkoutType } from "../../../App";
 import MapContext from "../../../store/map-context";
+import { v4 } from "uuid";
 
-export interface WorkoutBlankProps {
-  submitWorkout: (workoutData: WorkoutType) => void;
-}
-
-export default function Workout(props: WorkoutBlankProps) {
+export default function WorkoutBlank() {
+  // 通过useRef选择所有虚拟DOM
   const typeSelect = useRef<HTMLSelectElement>(null);
   const distanceInput = useRef<HTMLInputElement>(null);
   const durationInput = useRef<HTMLInputElement>(null);
@@ -18,66 +12,75 @@ export default function Workout(props: WorkoutBlankProps) {
   const eleInput = useRef<HTMLInputElement>(null);
   const cadRef = useRef<HTMLDivElement>(null);
   const eleRef = useRef<HTMLDivElement>(null);
-
+  // 初始化showType用于显示running特有的表单或着cycling特有的表单
   const [showType, setShowType] = useState("running");
-
+  // 引入context
   const ctx = useContext(MapContext);
 
-  const submitHandler = (e: React.FormEvent) => {
-    e.preventDefault();
-    const date = new Date();
-
-    if (
-      +distanceInput.current!.value <= 0 ||
-      +durationInput.current!.value <= 0 ||
-      +cadInput.current!.value < 0 ||
-      +eleInput.current!.value < 0
-    ) {
-      alert("必须大于0");
-      return;
-    }
-
-    if (
-      !Number.isFinite(+distanceInput.current!.value) ||
-      !Number.isFinite(+durationInput.current!.value) ||
-      !Number.isFinite(+cadInput.current!.value) ||
-      !Number.isFinite(+eleInput.current!.value)
-    ) {
-      alert("必须是数字");
-      return;
-    }
-
-    const submitData = {
-      id: "3",
-      date: date,
-      type: typeSelect.current!.value,
-      loc: [31.6, 121.4],
-      distance:
-        +distanceInput.current!.value > 0 ? +distanceInput.current!.value : 0,
-      duration:
-        +durationInput.current!.value > 0 ? +distanceInput.current!.value : 0,
-      cadOrEle:
-        typeSelect.current!.value === "running"
-          ? +cadInput.current!.value > 0
-            ? +cadInput.current!.value
-            : 0
-          : +eleInput.current!.value > 0
-          ? +eleInput.current!.value
-          : 0,
-    };
-
-    props.submitWorkout(submitData);
-
-    ctx.setShowBlank(false);
-
+  const clearInput = () => {
     distanceInput.current!.value = "";
     durationInput.current!.value = "";
     cadInput.current!.value = "";
     eleInput.current!.value = "";
   };
+  // 表单提交时,添加运动数据
+  const submitHandler = (e: React.FormEvent) => {
+    //防止页面自动刷新
+    e.preventDefault();
+
+    // 设置表单提交日期
+    const date = new Date();
+
+    const distanceValue = +distanceInput.current!.value;
+    const durationValue = +durationInput.current!.value;
+    const cadValue = +cadInput.current!.value;
+    const eleValue = +eleInput.current!.value;
+    const type = typeSelect.current!.value;
+
+    // GUARD CLAUSE
+    if (
+      distanceValue <= 0 ||
+      durationValue <= 0 ||
+      // 这两个必须同时小于等于0时才弹出错误弹窗,若使用或运算符,则会出现bug
+      (cadValue <= 0 && eleValue <= 0)
+    ) {
+      alert("输入数值必须大于0");
+      return;
+    }
+
+    if (
+      !Number.isFinite(distanceValue) ||
+      !Number.isFinite(durationValue) ||
+      !Number.isFinite(cadValue) ||
+      !Number.isFinite(eleValue)
+    ) {
+      alert("输入内容必须是数字");
+      return;
+    }
+
+    const submitData = {
+      id: v4(),
+      date: date,
+      type: type,
+      loc: [31.6, 121.4],
+      distance: distanceValue,
+      duration: durationValue,
+      cadOrEle: type === "running" ? cadValue : eleValue,
+    };
+
+    // 向app中的data添加数据
+    ctx.addWorkoutHandler(submitData);
+    //  关闭空白表单数据
+    ctx.setShowBlank(false);
+    // 清空表单
+    clearInput();
+  };
 
   const typeChangeHandler = (e: React.ChangeEvent) => {
     e.preventDefault();
+    // 清空表单
+    clearInput();
+    // 改变显示的运动项目
     setShowType(typeSelect.current!.value);
   };
 

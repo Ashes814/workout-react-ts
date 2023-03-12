@@ -1,42 +1,28 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import { Marker, Popup, useMapEvents } from "react-leaflet";
 import markerIconPng from "leaflet/dist/images/marker-icon.png";
 import { Icon } from "leaflet";
 import MapContext from "../../../store/map-context";
 
-export default function MapMarker(props: any) {
-  //   const [markerPosition, setMarkerPosition] = useState<[number, number]>([
-  //     31.5, 121.5,
-
-  //   ]);
-
-  // const [isAdding, setIsAdding] = useState<boolean>(true);
+export default function MapMarker() {
   const ctx = useContext(MapContext);
 
+  // 通过useMapEvents绑定在地图上的单击事件
   const map = useMapEvents({
     click: (e) => {
-      //   props.getLoc([e.latlng.lat, e.latlng.lng]);
-
-      // if (isAdding) {
-      props.setPosition([e.latlng.lat, e.latlng.lng]);
+      // 设置单击点坐标
+      ctx.setPosition([e.latlng.lat, e.latlng.lng]);
+      // 弹出空白运动数据表格
       ctx.setShowBlank(true);
-      // setIsAdding(false);
-      // }
-
-      // loc = e.latlng;
-    },
-    locationfound: (location) => {
-      console.log("location found:", location);
     },
   });
 
+  // 将map对象返回给App组件
   ctx.setMap(map);
-
-  //   props.flyToMarker(map);
 
   return (
     <Marker
-      position={props.position}
+      position={ctx.position}
       icon={
         new Icon({
           iconUrl: markerIconPng,

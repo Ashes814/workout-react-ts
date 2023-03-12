@@ -1,52 +1,33 @@
 import React, { useContext } from "react";
 import WorkoutBlank from "./WorkoutBlank";
-import WorkoutCycling from "./WorkoutCycling";
-import WorkoutRunning from "./WorkoutRunning";
+import Workout from "./Workout";
 import Logo from "../../img/logo.png";
 import "./index.css";
 import { WorkoutType } from "../../App";
 import MapContext from "../../store/map-context";
 
-export interface WorkoutTypeProps {
-  data: WorkoutType[];
-  submitWorkout: (workoutData: WorkoutType) => void;
-  flyToMarker: (map: any) => void;
-}
-
-export default function Workouts(props: WorkoutTypeProps) {
+export default function Workouts() {
   const ctx = useContext(MapContext);
   return (
     <div className="sidebar">
       <img src={Logo} alt="Logo" className="logo" />
 
-      {/* {ctx.showBlank ? ( */}
-      <WorkoutBlank submitWorkout={props.submitWorkout} />
-      {/* ) : null} */}
+      {/* 渲染空运动数据表单 */}
+      <WorkoutBlank />
 
+      {/* 渲染workout数据 */}
       <div className="workouts__container">
-        {props.data.map((workout) => {
-          return workout.type === "running" ? (
-            <WorkoutRunning
-              key={workout.id}
-              data={workout}
-              flyToMarker={props.flyToMarker}
-            />
-          ) : (
-            <WorkoutCycling key={workout.id} data={workout} />
+        {ctx.data.map((workout: WorkoutType) => {
+          return (
+            <Workout key={workout.id} data={workout} type={workout.type} />
           );
         })}
       </div>
 
+      {/* 页脚 */}
       <p className="copyright">
-        &copy; Copyright by -
-        <a
-          className="twitter-link"
-          target="_blank"
-          href="https://twitter.com/jonasschmedtman"
-        >
-          Jonas Schmedtmann
-        </a>
-        . Modified with React + TypeScript by OO.
+        &copy; Copyright by - Jonas Schmedtmann. Modified with React +
+        TypeScript by 欧欧.
       </p>
     </div>
   );
