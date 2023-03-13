@@ -11,6 +11,7 @@
   /* Match height and activity boxes */
   height: 9.25rem;
   transition: all 0.5s, transform 1ms;
+  position: relative;
 }
 
 .form.hidden {
@@ -53,5 +54,15 @@
 }
 
 .form__btn {
-  display: none;
+  /* display: none; */
+  font-size: 0.5rem;
+  width: 20px;
+  position: absolute;
+  right: 0;
+  top: 2px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
 }

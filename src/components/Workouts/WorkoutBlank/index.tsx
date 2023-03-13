@@ -143,7 +143,7 @@ export default function WorkoutBlank() {
           ref={eleInput}
         />
       </div>
-      <button className="form__btn">OK</button>
+      <button className="form__btn">✅</button>
     </form>
   );
 }
