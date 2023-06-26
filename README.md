@@ -1,6 +1,6 @@
 # Workout App
 
-This project was published on [Workout App]([https://github.com/facebook/create-react-app](https://oo-workout.netlify.app)https://oo-workout.netlify.app).
+This project was published on [Workout App]([https://github.com/facebook/create-react-app](https://oo-workout.netlify.app)https://oo-workout.netlify.app]).
 
 # Techs
 - TypeScript
