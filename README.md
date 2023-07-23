@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-
 # [App 教程]第 7 期 : Mapty 健身记录（React18+TS+Leaflet）
 
 源码:[https://github.com/Ashes814/workout-react-ts](https://github.com/Ashes814/workout-react-ts)
