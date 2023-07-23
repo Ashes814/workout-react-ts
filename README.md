@@ -1,46 +1,177 @@
-# Getting Started with Create React App
+# [App教程]第7期 : Mapty健身记录（React18+TS+Leaflet）
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+源码:[https://github.com/Ashes814/workout-react-ts](https://github.com/Ashes814/workout-react-ts)
 
-## Available Scripts
+# 功能概述
 
-In the project directory, you can run:
+- 展示地图
+- 单击添加标记并弹窗，弹出运动记录
+- 运动记录分为跑步和骑车两种模式
+- 提供表单记录运动详情
+- 设计UI形成运动列表
+- 单击运动项目可以在地图上实现跳转
 
-### `npm start`
+![20230720_181202.gif](%5BApp%E6%95%99%E7%A8%8B%5D%E7%AC%AC7%E6%9C%9F%20Mapty%E5%81%A5%E8%BA%AB%E8%AE%B0%E5%BD%95%EF%BC%88React18+TS+Leaflet%EF%BC%89%20f88ec49a82b745a5b5a8cb804d59ea00/20230720_181202.gif)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+# 关键词
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- `React18`
+- `TypeScript`
+- `Leaflet`
 
-### `npm test`
+# 组件拆解
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## `MapView`
 
-### `npm run build`
+- 创建地图容器
+- 选择地图瓦片
+- 存放MapMarker - 地图标记
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```jsx
+import React, { useContext } from "react";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import markerIconPng from "leaflet/dist/images/marker-icon.png";
+import { Icon } from "leaflet";
+import "./index.css";
+import MapMarker from "./MapMarker";
+import MapContext from "../../store/map-context";
+import { WorkoutType } from "../../App";
+import { LatLngExpression } from "leaflet";
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+export default function MapView() {
+  const ctx = useContext(MapContext);
+  return (
+    // 创建地图容器
+    <MapContainer
+      className="map-container"
+      // 设置初始化地图中心
+      center={[31.5, 121.5]}
+      // 设置缩放级别
+      zoom={13}
+      //是否使用滚轮缩放
+      scrollWheelZoom={false}
+    >
+      {/* 瓦片 */}
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
+      />
+      {/* 渲染已有数据 */}
+      {ctx.data.map((workout: WorkoutType) => {
+        return (
+          <Marker
+            key={workout.id}
+            position={workout.loc as LatLngExpression}
+            // 定义标记图标
+            icon={
+              new Icon({
+                iconUrl: markerIconPng,
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+              })
+            }
+          >
+            {/* 定义弹窗内容 */}
+            <Popup>
+              {workout.type} at
+              {`${workout.date.getMonth() + 1}/${workout.date.getDate()}`}.
+            </Popup>
+          </Marker>
+        );
+      })}
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+      {/* 添加新增数据标记 */}
+      <MapMarker />
+    </MapContainer>
+  );
+}
+```
 
-### `npm run eject`
+## `MapMarker`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- `MapView` 的子组件
+- 实现单击事件
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```jsx
+import React, { useContext } from "react";
+import { Marker, Popup, useMapEvents } from "react-leaflet";
+import markerIconPng from "leaflet/dist/images/marker-icon.png";
+import { Icon } from "leaflet";
+import MapContext from "../../../store/map-context";
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+export default function MapMarker() {
+  const ctx = useContext(MapContext);
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+  // 通过useMapEvents绑定在地图上的单击事件
+  const map = useMapEvents({
+    click: (e) => {
+      // 设置单击点坐标
+      ctx.setPosition([e.latlng.lat, e.latlng.lng]);
+      // 弹出空白运动数据表格
+      ctx.setShowBlank(true);
+    },
+  });
 
-## Learn More
+  // 将map对象返回给App组件
+  ctx.setMap(map);
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+  return (
+    <Marker
+      position={ctx.position}
+      icon={
+        new Icon({
+          iconUrl: markerIconPng,
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+        })
+      }
+    >
+      <Popup>请输入健身信息...</Popup>
+    </Marker>
+  );
+}
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## `Workouts`
+
+- 健身记录的容器
+- 设计健身记录UI
+
+## `Workout`
+
+- 单个健身记录
+- 实现单击事件
+- 根据健身记录类型的不同展示不同的数据（running，cycling）
+
+## `WorkoutBlank`
+
+- 空健身记录
+- 展示添加健身记录时的表单
+
+# 数据传输useContext
+
+- 顶层父组件App中
+
+```jsx
+<MapContext.Provider
+      // 通过context传递数据
+      value={{
+        flyToMarker,
+        map,
+        setMap,
+        showBlank,
+        setShowBlank,
+        data,
+        position,
+        setPosition,
+        addWorkoutHandler,
+      }}
+    >
+      <div className="App">
+        <Workouts />
+        <div id="map-container" className="map-container">
+          <MapView />
+        </div>
+      </div>
+    </MapContext.Provider>
+```
