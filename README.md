@@ -1,4 +1,6 @@
-# [App教程]第7期 : Mapty健身记录（React18+TS+Leaflet）
+<<<<<<< HEAD
+
+# [App 教程]第 7 期 : Mapty 健身记录（React18+TS+Leaflet）
 
 源码:[https://github.com/Ashes814/workout-react-ts](https://github.com/Ashes814/workout-react-ts)
 
@@ -8,7 +10,7 @@
 - 单击添加标记并弹窗，弹出运动记录
 - 运动记录分为跑步和骑车两种模式
 - 提供表单记录运动详情
-- 设计UI形成运动列表
+- 设计 UI 形成运动列表
 - 单击运动项目可以在地图上实现跳转
 
 ![20230720_181202.gif](%5BApp%E6%95%99%E7%A8%8B%5D%E7%AC%AC7%E6%9C%9F%20Mapty%E5%81%A5%E8%BA%AB%E8%AE%B0%E5%BD%95%EF%BC%88React18+TS+Leaflet%EF%BC%89%20f88ec49a82b745a5b5a8cb804d59ea00/20230720_181202.gif)
@@ -25,7 +27,7 @@
 
 - 创建地图容器
 - 选择地图瓦片
-- 存放MapMarker - 地图标记
+- 存放 MapMarker - 地图标记
 
 ```jsx
 import React, { useContext } from "react";
@@ -135,7 +137,7 @@ export default function MapMarker() {
 ## `Workouts`
 
 - 健身记录的容器
-- 设计健身记录UI
+- 设计健身记录 UI
 
 ## `Workout`
 
@@ -148,30 +150,30 @@ export default function MapMarker() {
 - 空健身记录
 - 展示添加健身记录时的表单
 
-# 数据传输useContext
+# 数据传输 useContext
 
-- 顶层父组件App中
+- 顶层父组件 App 中
 
 ```jsx
 <MapContext.Provider
-      // 通过context传递数据
-      value={{
-        flyToMarker,
-        map,
-        setMap,
-        showBlank,
-        setShowBlank,
-        data,
-        position,
-        setPosition,
-        addWorkoutHandler,
-      }}
-    >
-      <div className="App">
-        <Workouts />
-        <div id="map-container" className="map-container">
-          <MapView />
-        </div>
-      </div>
-    </MapContext.Provider>
+  // 通过context传递数据
+  value={{
+    flyToMarker,
+    map,
+    setMap,
+    showBlank,
+    setShowBlank,
+    data,
+    position,
+    setPosition,
+    addWorkoutHandler,
+  }}
+>
+  <div className="App">
+    <Workouts />
+    <div id="map-container" className="map-container">
+      <MapView />
+    </div>
+  </div>
+</MapContext.Provider>
 ```
